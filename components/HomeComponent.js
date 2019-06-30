@@ -49,7 +49,6 @@ render(){
         </ScrollView>
     );
 }
-
 }
 
 export default Home;
