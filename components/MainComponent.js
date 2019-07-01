@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import Menu from './MenuComponent';
-import Home from './HomeComponent';
-import Contact from './ContactComponent';
-import About from './AboutComponent';
 import {View, Platform, Image, StyleSheet, ScrollView, Text} from 'react-native';
 import DishDetail from './DishDetailComponent';
 import {createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView} from 'react-navigation';
 import {Icon} from 'react-native-elements';
 import { connect } from 'react-redux';
 import {fetchComments,fetchDishes,fetchLeaders,fetchPromos} from '../shared/redux/ActionCreater'
-
+import Reservation from './ReservationComponent';
+import  Menu  from './MenuComponent';
+import Home from './HomeComponent';
+import Contact from './ContactComponent';
+import About from './AboutComponent';
 
 const mapStateToProps = state => {
     return {
@@ -28,11 +28,14 @@ const mapDispatchToProps = dispatch => ({
 })
 
 const MenuNavigator= createStackNavigator({
-    Menu: { screen: ()=> <Menu/>,
+    Menu: { screen: ()=>(<Menu/>),
         navigationOptions: ({ navigation }) => ({
-          headerLeft: <Icon name="menu" size={24} 
+          headerLeft: (<Icon name="menu" size={24} 
           color= 'white' containerStyle={{paddingLeft:10}}
-          onPress={ () => navigation.toggleDrawer() } />          
+          onPress={ () => navigation.toggleDrawer() }
+          hea
+          />
+          )          
         })  
     },
     DishDetail: {screen: ()=><DishDetail/>}
@@ -45,17 +48,19 @@ const MenuNavigator= createStackNavigator({
         headerTintColor: '#fff',
         headerTitleStyle: {
             color: '#fff'
-        }
+        },
+        headerTitle: 'Menu'
     }
 });
 
 const HomeNavigator= createStackNavigator({
-    Home: {screen: ()=> <Home/>},
+    Home: {screen: ()=> <Home/>}
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
             backgroundColor: '#512DA8'
         },
+        headerTitle: 'Home',
         headerTintColor: '#fff',
         headerTitleStyle: {
             color: '#fff'
@@ -67,7 +72,7 @@ const HomeNavigator= createStackNavigator({
 });
 
 const ContactNavigator= createStackNavigator({
-    Contact: {screen: ()=><Contact/>},
+    Contact: {screen: Contact},
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
@@ -84,13 +89,14 @@ const ContactNavigator= createStackNavigator({
 });
 
 const AboutNavigator= createStackNavigator({
-    About: {screen: ()=><About/>},
+About: {screen: ()=>(<About/>)},
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
             backgroundColor: '#512DA8'
         },
         headerTintColor: '#fff',
+        headerTitle: 'About Us',
         headerTitleStyle: {
             color: '#fff'
         },
@@ -99,6 +105,23 @@ const AboutNavigator= createStackNavigator({
         onPress={()=>navigation.toggleDrawer()}></Icon>
     })
 });
+
+const ReservationNavigator = createStackNavigator({
+    Reservation: { screen: Reservation }
+  }, {
+    navigationOptions: ({ navigation }) => ({
+      headerStyle: {
+          backgroundColor: "#512DA8"
+      },
+      headerTitleStyle: {
+          color: "#fff"            
+      },
+      headerTintColor: "#fff",
+      headerLeft: <Icon name="menu" size={24}
+        iconStyle={{ color: 'white' }} containerStyle={{paddingLeft:10}} 
+       onPress={ () => navigation.toggleDrawer() } />    
+    })
+  });
 
 const CustomDrawerComponent = (props) => (
 <ScrollView>
@@ -179,6 +202,21 @@ const MainNavigator = createDrawerNavigator({
                 />
               )
         }
+    },
+    Reservation:
+    { screen: ReservationNavigator,
+      navigationOptions: {
+        title: 'Reserve Table',
+        drawerLabel: 'Reserve Table',
+        drawerIcon: ({ tintColor, focused }) => (
+          <Icon
+            name='cutlery'
+            type='font-awesome'            
+            size={24}
+            iconStyle={{ color: tintColor }}
+          />
+        ),
+      }
     }
 },{
     drawerBackgroundColor: '#D1C4E9',
