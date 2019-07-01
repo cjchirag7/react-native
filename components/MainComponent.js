@@ -7,15 +7,35 @@ import {View, Platform, Image, StyleSheet, ScrollView, Text} from 'react-native'
 import DishDetail from './DishDetailComponent';
 import {createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView} from 'react-navigation';
 import {Icon} from 'react-native-elements';
+import { connect } from 'react-redux';
+import {fetchComments,fetchDishes,fetchLeaders,fetchPromos} from '../shared/redux/ActionCreater'
+
+
+const mapStateToProps = state => {
+    return {
+        dishes: state.dishes,
+        comments: state.comments,
+        promotions: state.promotions,
+        leaders: state.leaders
+      }
+  }
+
+const mapDispatchToProps = dispatch => ({
+    fetchDishes : ()=>dispatch(fetchDishes()),
+    fetchComments : ()=>dispatch(fetchComments()),
+    fetchPromos : ()=>dispatch(fetchPromos()),
+    fetchLeaders : ()=>dispatch(fetchLeaders())
+})
 
 const MenuNavigator= createStackNavigator({
-    Menu: {screen: Menu,
-            navigationOptions: ({navigation})=>({
-                headerLeft: <Icon name='menu' size={24}
-                                  color='white' containerStyle={{paddingLeft:10}}
-                                  onPress={()=>navigation.toggleDrawer()}></Icon>
-            })},
-    DishDetail: {screen: DishDetail}
+    Menu: { screen: ()=> <Menu/>,
+        navigationOptions: ({ navigation }) => ({
+          headerLeft: <Icon name="menu" size={24} 
+          color= 'white' containerStyle={{paddingLeft:10}}
+          onPress={ () => navigation.toggleDrawer() } />          
+        })  
+    },
+    DishDetail: {screen: ()=><DishDetail/>}
 },{ 
     initialRouteName: 'Menu',
     navigationOptions: {
@@ -30,7 +50,7 @@ const MenuNavigator= createStackNavigator({
 });
 
 const HomeNavigator= createStackNavigator({
-    Home: {screen: Home},
+    Home: {screen: ()=> <Home/>},
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
@@ -47,7 +67,7 @@ const HomeNavigator= createStackNavigator({
 });
 
 const ContactNavigator= createStackNavigator({
-    Contact: {screen: Contact},
+    Contact: {screen: ()=><Contact/>},
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
@@ -64,7 +84,7 @@ const ContactNavigator= createStackNavigator({
 });
 
 const AboutNavigator= createStackNavigator({
-    About: {screen: About},
+    About: {screen: ()=><About/>},
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
@@ -174,8 +194,15 @@ class Main extends Component {
         </View>
     );
   }
-}
 
+
+    componentDidMount() {
+        this.props.fetchDishes();
+        this.props.fetchComments();
+        this.props.fetchPromos();
+        this.props.fetchLeaders();        
+    }
+}
 const styles = StyleSheet.create({
     container: {
         flex: 1
@@ -199,4 +226,5 @@ const styles = StyleSheet.create({
         height: 60
       }
     });
-export default Main;
+    
+export default connect(mapStateToProps,mapDispatchToProps)(Main);
