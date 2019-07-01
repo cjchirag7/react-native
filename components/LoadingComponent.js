@@ -10,7 +10,7 @@ const styles=StyleSheet.create(
         },
         loadingText: {
              color:'#512DAB',
-             fontSize: '12',
+             fontSize: 12,
              fontWeight: 'bold'
         }
     }
