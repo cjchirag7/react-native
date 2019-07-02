@@ -28,7 +28,7 @@ const mapDispatchToProps = dispatch => ({
 })
 
 const MenuNavigator= createStackNavigator({
-    Menu: { screen: ()=>(<Menu/>),
+    Menu: { screen: (props)=>(<Menu {...props}/>),
         navigationOptions: ({ navigation }) => ({
           headerLeft: (<Icon name="menu" size={24} 
           color= 'white' containerStyle={{paddingLeft:10}}
@@ -38,7 +38,7 @@ const MenuNavigator= createStackNavigator({
           )          
         })  
     },
-    DishDetail: {screen: ()=><DishDetail/>}
+    DishDetail: {screen: (props)=><DishDetail {...props}/>}
 },{ 
     initialRouteName: 'Menu',
     navigationOptions: {
@@ -54,7 +54,7 @@ const MenuNavigator= createStackNavigator({
 });
 
 const HomeNavigator= createStackNavigator({
-    Home: {screen: ()=> <Home/>}
+    Home: {screen: (props)=> <Home {...{props}}/>}
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
@@ -89,7 +89,7 @@ const ContactNavigator= createStackNavigator({
 });
 
 const AboutNavigator= createStackNavigator({
-About: {screen: ()=>(<About/>)},
+About: {screen: (props)=>(<About {...{props}}/>)},
 },{ 
     navigationOptions: ({navigation})=>({
         headerStyle: {
