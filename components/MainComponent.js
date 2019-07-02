@@ -10,6 +10,7 @@ import  Menu  from './MenuComponent';
 import Home from './HomeComponent';
 import Contact from './ContactComponent';
 import About from './AboutComponent';
+import Favorites from './FavoriteComponent';
 
 const mapStateToProps = state => {
     return {
@@ -117,9 +118,27 @@ const ReservationNavigator = createStackNavigator({
           color: "#fff"            
       },
       headerTintColor: "#fff",
+      headerTitle: 'My Favorites',
       headerLeft: <Icon name="menu" size={24}
         iconStyle={{ color: 'white' }} containerStyle={{paddingLeft:10}} 
        onPress={ () => navigation.toggleDrawer() } />    
+    })
+  });
+
+  const FavoritesNavigator = createStackNavigator({
+    Favorites: { screen: (props)=> <Favorites {...props}/> }
+  }, {
+    navigationOptions: ({ navigation }) => ({
+      headerStyle: {
+          backgroundColor: "#512DA8"
+      },
+      headerTitleStyle: {
+          color: "#fff"            
+      },
+      headerTintColor: "#fff",
+      headerLeft: <Icon name="menu" size={24}
+        iconStyle={{ color: 'white' }} containerStyle={{paddingLeft:10}} 
+        onPress={ () => navigation.toggleDrawer() } />    
     })
   });
 
@@ -217,7 +236,22 @@ const MainNavigator = createDrawerNavigator({
           />
         ),
       }
-    }
+    },
+    Favorites:
+        { screen: FavoritesNavigator,
+          navigationOptions: {
+            title: 'My Favorites',
+            drawerLabel: 'My Favorites',
+            drawerIcon: ({ tintColor, focused }) => (
+              <Icon
+                name='heart'
+                type='font-awesome'            
+                size={24}
+                iconStyle={{ color: tintColor }}
+              />
+            ),
+          }
+        }
 },{
     drawerBackgroundColor: '#D1C4E9',
     contentComponent: CustomDrawerComponent
