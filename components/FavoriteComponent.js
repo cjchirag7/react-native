@@ -48,7 +48,7 @@ const mapStateToProps = state => {
                                 onPress: () => this.props.deleteFavorite(item.id)
                             }
                         ],
-                        { cancelable: false }
+                        { cancelable: false })
                 }
             }
         ];
