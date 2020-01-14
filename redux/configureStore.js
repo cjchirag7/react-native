@@ -9,18 +9,27 @@ import { favorites } from './favorites';
 // import { Auth } from './auth';
 // import { InitialFeedback } from './forms';
 
+import { persistStore, persistCombineReducers } from 'redux-persist';
+import { AsyncStorage } from 'react-native';
+
 export const ConfigureStore = () => {
+  const config = {
+    key: 'root',
+    debug: true,
+    storage: AsyncStorage
+  };
+
   const store = createStore(
-    combineReducers({
+    persistCombineReducers(config, {
       dishes: Dishes,
       comments: Comments,
       promotions: Promotions,
       leaders: Leaders,
-      //   auth: Auth,
       favorites
     }),
     applyMiddleware(thunk, logger)
   );
+  const persistor = persistStore(store);
 
-  return store;
+  return { persistor, store };
 };
