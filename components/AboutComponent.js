@@ -30,7 +30,7 @@ class About extends Component {
   };
 
   render() {
-    const renderMenuItem = ({ item, index }) => {
+    const renderLeader = ({ item, index }) => {
       return (
         <ListItem
           key={index}
