@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/bin/node /usr/share/yarn/bin/yarn.js add redux-persist@latest
+  /usr/bin/node /usr/share/yarn/bin/yarn.js add react-navigation-tabs
 
 PATH: 
-  /home/chirag/.gvm/bin:/usr/local/cuda-9.0/bin:/usr/local/cuda-9.0/bin:/home/chirag/.gvm/bin:/usr/local/cuda-9.0/bin:/usr/local/cuda-9.0/bin:/home/chirag/anaconda3/bin:/home/chirag/anaconda3/condabin:/home/chirag/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/chirag/go/bin:/home/chirag/go/bin:/home/chirag/go/bin
+  /home/chirag/.gvm/bin:/usr/local/cuda-9.0/bin:/usr/local/cuda-9.0/bin:/home/chirag/anaconda3/bin:/home/chirag/anaconda3/condabin:/home/chirag/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/chirag/go/bin:/home/chirag/go/bin
 
 Yarn version: 
   1.21.1
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: EACCES: permission denied, unlink '/home/chirag/Documents/WebD/React Native/confusion/node_modules/@babel/code-frame/LICENSE'
+  Error: EACCES: permission denied, mkdir '/home/chirag/Documents/WebD/React Native/confusion/node_modules/react-navigation-tabs/node_modules/hoist-non-react-statics'
 
 npm manifest: 
   {
@@ -28,6 +28,10 @@ npm manifest:
     },
     "dependencies": {
       "expo": "^33.0.0",
+      "expo-image-picker": "~5.0.2",
+      "expo-mail-composer": "~5.0.1",
+      "expo-permissions": "~5.0.1",
+      "expo-secure-store": "~5.0.1",
       "react": "16.8.3",
       "react-dom": "^16.8.6",
       "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
@@ -40,6 +44,7 @@ npm manifest:
       "react-redux": "^7.1.0",
       "redux": "^4.0.1",
       "redux-logger": "^3.0.6",
+      "redux-persist": "^6.0.0",
       "redux-thunk": "^2.3.0"
     },
     "devDependencies": {
@@ -4976,6 +4981,11 @@ Lockfile:
     integrity sha1-91VZZvMJjzyIYExEnPC69XeCdL8=
     dependencies:
       deep-diff "^0.3.5"
+  
+  redux-persist@^6.0.0:
+    version "6.0.0"
+    resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-6.0.0.tgz#b4d2972f9859597c130d40d4b146fecdab51b3a8"
+    integrity sha512-71LLMbUq2r02ng2We9S215LtPu3fY0KgaGE0k8WRgl6RkqxtGfl7HUozz1Dftwsb0D/5mZ8dwAaPbtnzfvbEwQ==
   
   redux-thunk@^2.3.0:
     version "2.3.0"

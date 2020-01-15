@@ -13,7 +13,9 @@ import {
 // import { Card } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable';
-import { Permissions, Notifications } from 'expo';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
   constructor(props) {
@@ -44,6 +46,44 @@ class Reservation extends Component {
     title: 'Reserve Table'
   };
 
+  obtainCalendarPermission() {
+    // let permission = await Permissions.getAsync(Permissions.CALENDAR);
+    // if (permission.status !== 'granted') {
+    //   Alert.alert('Permission not granted to use calendar');
+    // }
+    // return permission;
+    Calendar.requestPermissionsAsync().then(({ status }) => {
+      if (status === 'granted') {
+        console.log('Here are all your calendars:');
+        Calendar.getCalendarsAsync().then(calendars =>
+          console.log('calenders received')
+        );
+      } else {
+        Alert.alert('Permission not granted to use calendar (' + status + ')');
+      }
+    });
+  }
+
+  async addReservationToCalendar(date) {
+    await this.obtainCalendarPermission();
+    defaultCalendar = await this.getDefaultCalendarSource();
+    console.log(defaultCalendar);
+    Calendar.createEventAsync(defaultCalendar.id, {
+      title: 'Con Fusion Table Reservation',
+      startDate: new Date(Date.parse(date)),
+      endDate: new Date(Date.parse(date) + 2 * 60 * 60 * 1000),
+      timeZone: 'Asia/Hong_Kong',
+      location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+    });
+    Alert.alert('Event generated in your calendar');
+  }
+
+  async getDefaultCalendarSource() {
+    const calendars = await Calendar.getCalendarsAsync();
+    const defaultCalendars = calendars.filter(each => each.allowsModifications);
+    return defaultCalendars[0];
+  }
+
   async obtainNotificationPermission() {
     let permission = await Permissions.getAsync(
       Permissions.USER_FACING_NOTIFICATIONS
@@ -73,6 +113,11 @@ class Reservation extends Component {
         color: '#512DA8'
       }
     });
+    Notifications.createChannelAndroidAsync('Confusion', {
+      name: 'Confusion',
+      sound: true,
+      vibrate: true
+    });
   }
 
   handleReservation() {
@@ -95,6 +140,7 @@ class Reservation extends Component {
           text: 'OK',
           onPress: () => {
             this.presentLocalNotification(date);
+            this.addReservationToCalendar(date);
             this.resetForm();
           }
         }

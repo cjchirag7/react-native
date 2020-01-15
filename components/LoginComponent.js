@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text, ScrollView, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Image,
+  Platform
+} from 'react-native';
 import { Input, CheckBox, Button, Icon } from 'react-native-elements';
-import { SecureStore, Permissions, ImagePicker } from 'expo';
+// import { Camera, Asset } from 'expo';
+import * as SecureStore from 'expo-secure-store';
 import { createBottomTabNavigator } from 'react-navigation';
 import { baseUrl } from '../shared/baseUrl';
-
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 class LoginTab extends Component {
   constructor(props) {
     super(props);
@@ -17,14 +27,18 @@ class LoginTab extends Component {
   }
 
   componentDidMount() {
-    SecureStore.getItemAsync('userinfo').then(userdata => {
-      let userinfo = JSON.parse(userdata);
-      if (userinfo) {
-        this.setState({ username: userinfo.username });
-        this.setState({ password: userinfo.password });
-        this.setState({ remember: true });
-      }
-    });
+    SecureStore.getItemAsync('userinfo')
+      .then(userdata => {
+        let userinfo = JSON.parse(userdata);
+        if (userinfo) {
+          this.setState({ username: userinfo.username });
+          this.setState({ password: userinfo.password });
+          this.setState({ remember: true });
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   static navigationOptions = {
@@ -57,44 +71,46 @@ class LoginTab extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Input
-          placeholder='Username'
-          leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-          onChangeText={username => this.setState({ username })}
-          value={this.state.username}
-          containerStyle={styles.formInput}
-        />
-        <Input
-          placeholder='Password'
-          leftIcon={{ type: 'font-awesome', name: 'key' }}
-          onChangeText={password => this.setState({ password })}
-          value={this.state.password}
-          containerStyle={styles.formInput}
-        />
-        <CheckBox
-          title='Remember Me'
-          center
-          checked={this.state.remember}
-          onPress={() => this.setState({ remember: !this.state.remember })}
-          containerStyle={styles.formCheckbox}
-        />
-        <View style={styles.formButton}>
-          <Button
-            onPress={() => this.handleLogin()}
-            title='Login'
-            icon={
-              <Icon
-                name='sign-in'
-                type='font-awesome'
-                size={24}
-                color='white'
-              />
-            }
-            buttonStyle={{
-              backgroundColor: '#512DA8'
-            }}
+      <ScrollView>
+        <View style={styles.container}>
+          <Input
+            placeholder='Username'
+            leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+            onChangeText={username => this.setState({ username })}
+            value={this.state.username}
+            containerStyle={styles.formInput}
           />
+          <Input
+            placeholder='Password'
+            leftIcon={{ type: 'font-awesome', name: 'key' }}
+            onChangeText={password => this.setState({ password })}
+            value={this.state.password}
+            containerStyle={styles.formInput}
+          />
+          <CheckBox
+            title='Remember Me'
+            center
+            checked={this.state.remember}
+            onPress={() => this.setState({ remember: !this.state.remember })}
+            containerStyle={styles.formCheckbox}
+          />
+          <View style={styles.formButton}>
+            <Button
+              onPress={() => this.handleLogin()}
+              title='Login'
+              icon={
+                <Icon
+                  name='sign-in'
+                  type='font-awesome'
+                  size={24}
+                  color='white'
+                />
+              }
+              buttonStyle={{
+                backgroundColor: '#512DA8'
+              }}
+            />
+          </View>
         </View>
         <View style={styles.formButton}>
           <Button
@@ -114,7 +130,7 @@ class LoginTab extends Component {
             }}
           />
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -130,9 +146,35 @@ class RegisterTab extends Component {
       lastname: '',
       email: '',
       remember: false,
-      imageUrl: baseUrl + 'images/logo.png'
+      imageUri: baseUrl + 'images/logo.png'
     };
   }
+
+  componentDidMount() {
+    this.getPermissionAsync();
+  }
+
+  getPermissionAsync = async () => {
+    if (Platform.OS === 'ios') {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+      }
+    }
+  };
+
+  getImageFromGallery = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1
+    });
+    if (!result.cancelled) {
+      console.log(result);
+      this.processImage(result.localUri || result.uri);
+    }
+  };
 
   getImageFromCamera = async () => {
     const cameraPermission = await Permissions.askAsync(Permissions.CAMERA);
@@ -150,9 +192,19 @@ class RegisterTab extends Component {
       });
       if (!capturedImage.cancelled) {
         console.log(capturedImage);
-        this.setState({ imageUrl: capturedImage.uri });
+        this.processImage(capturedImage.localUri || capturedImage.uri);
       }
     }
+  };
+
+  processImage = async imageUri => {
+    let processedImage = await ImageManipulator.manipulateAsync(
+      imageUri,
+      [{ resize: { width: 400 } }],
+      { format: 'png' }
+    );
+    console.log(processedImage);
+    this.setState({ imageUri: processedImage.uri });
   };
 
   static navigationOptions = {
@@ -180,16 +232,26 @@ class RegisterTab extends Component {
   }
 
   render() {
+    const { imageUri } = this.state;
     return (
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: this.state.imageUrl }}
+              source={{ uri: imageUri }}
               loadingIndicatorSource={require('./images/logo.png')}
               style={styles.image}
             />
-            <Button title='Camera' onPress={this.getImageFromCamera} />
+            <Button
+              title='Camera'
+              onPress={this.getImageFromCamera}
+              style={styles.buttons}
+            />
+            <Button
+              title='Gallery'
+              onPress={this.getImageFromGallery}
+              style={styles.buttons}
+            />
           </View>
           <Input
             placeholder='Username'
@@ -208,7 +270,7 @@ class RegisterTab extends Component {
           <Input
             placeholder='First Name'
             leftIcon={{ type: 'font-awesome', name: 'user-o' }}
-            onChangeText={lastname => this.setState({ firstname })}
+            onChangeText={firstname => this.setState({ firstname })}
             value={this.state.firstname}
             containerStyle={styles.formInput}
           />
@@ -264,12 +326,15 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     flexDirection: 'row',
-    margin: 20
+    justifyContent: 'space-around'
   },
   image: {
     margin: 10,
     width: 80,
     height: 60
+  },
+  buttons: {
+    marginTop: 40
   },
   formInput: {
     margin: 20
